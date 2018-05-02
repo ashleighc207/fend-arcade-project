@@ -10,16 +10,8 @@ var Enemy = function(x, y, speed) {
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     this.x += (this.speed * dt);
-<<<<<<< HEAD
-
-    // reset the enemies location
-    if(this.x >= 505){
-        this.x = 0;
-    }
-=======
     this.hasCollided();
     this.reset();
->>>>>>> 4322ffddc8c48d228d41c327295d6de0083c733b
 };
 
 // reset the enemies once they hit the "wall" by assigning
