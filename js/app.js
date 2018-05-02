@@ -28,6 +28,8 @@ Enemy.prototype.reset = function() {
     }
 }
 
+// resets the enemy and is called when a new game starts
+// due to winning or losing
 Enemy.prototype.delete = function() {
     this.x = -100;
     this.y = yPoint[Math.floor(Math.random() * yPoint.length)];
