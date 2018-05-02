@@ -10,17 +10,45 @@ var Enemy = function(x, y, speed) {
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     this.x += (this.speed * dt);
+    this.hasCollided();
+    this.reset();
 };
+
+Enemy.prototype.reset = function() {
+    this.wall = 400;
+    this.resetX = xPoint[Math.floor(Math.random(), xPoint.length)];
+    this.resetY = yPoint[Math.floor(Math.random() * yPoint.length)];
+    this.resetS = Math.floor(Math.random() * 500);
+    if(this. x > this.wall){
+        this.x = this.resetX;
+        this.y = this.resetY;
+        this.speed = this.resetS;
+    }
+}
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Checks to see if an enemy and player collided
-Enemy.prototype.collide = function(){
+// found a collison detection MDN article, hasCollided() function
+// is based off the technique given in that article
+// https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
 
-}
+Enemy.prototype.hasCollided = function() {
+    var p = {x: player.x, y: player.y, height: 50, width: 50};
+    var e = {x: enemy.x, y: enemy.y, height: 50, width: 50};
+    if (p.x < e.x + e.width && 
+        p.y < e.y + e.height && 
+        p.x + p.width > e.x &&
+        p.y + p.height > e.y){
+        player.x = 200;
+        player.y = 370;
+        lives--;
+        enemy.render();
+    }
+};
+
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -32,10 +60,22 @@ var Player = function(x, y, speed) {
     this.speed = speed;
     this.sprite = 'images/char-cat-girl.png';
 };
-
+// checks if a user has earned points or died
 Player.prototype.update = function() {
-
+    this.earnPoint();
+    if(lives == 0){
+        resetGame();
+    }
 };
+
+// Checks to see if a user made it to the top without colliding
+// and adds one to the score if so
+Player.prototype.earnPoint = function(){
+    if(player.y == -30){
+        score += 20;
+        player.y = 370;
+    }    
+}
 
 // Draw the player on the screen, required method for game
 Player.prototype.render = function() {
@@ -44,7 +84,6 @@ Player.prototype.render = function() {
 
 // Allow the user to move the player via key press
 Player.prototype.handleInput = function(key) {
-
     var minX = 0;
     var maxX = 400;
     var minY = -30;
@@ -80,16 +119,25 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-// Checks to see if a user made it to the top without colliding
-// and adds one to the score if so
-Player.prototype.score = function(){
-
+function resetGame(){
+    console.log('game reset!');
+    player.x = 200;
+    player.y = 370;
+    lives = 3;
+    score = 0;
 }
 
-// Determines a way to win, and alerts when won via modal 
-Player.prototype.win = function(){
-
+function displayEndMsg(){
+    ctx.fill = "white";
 }
+function gameOver(){
+    enemy.x = -100;
+    enemy.speed = 0;
+    player.x = 200;
+    player.y = 370;
+    displayEndMsg();
+}
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -99,19 +147,14 @@ var allEnemies = [];
 var player = new Player(200,370,50);
 var xPoint = [-100, -80, -20, -10];
 var yPoint = [60, 140, 220];
-
-
-
-// make bugs keep coming 
-setInterval(function(){
-    var enemy = new Enemy(
+var lives = 3;
+var score = 0;
+var enemy = new Enemy(
     xPoint[Math.floor(Math.random(), xPoint.length)], 
     yPoint[Math.floor(Math.random() * yPoint.length)], 
-    Math.floor(Math.random() * (200 + 100))
-    );
+    Math.floor(Math.random() * 500));
+allEnemies.push(enemy);
 
-    allEnemies.push(enemy);
-}, 1500);
 
 
 
