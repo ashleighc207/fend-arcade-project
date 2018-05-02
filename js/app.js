@@ -123,21 +123,29 @@ function resetGame(){
     console.log('game reset!');
     player.x = 200;
     player.y = 370;
+    enemy.x = -10;
+    enemy.y = -10;
     lives = 3;
     score = 0;
+    modal.innerHTML = `
+    <h1 class="heading-one">Congrats! You won!</h1>
+    <p class="text">Your score is ${score} and you finished with ${lives} lives!</p>
+    <p class="new-game">Would you like to play again?</p>
+    <i class="fas fa-redo-alt restart"></i>
+    `;
+    modal.classList.remove('display-none');
 }
 
-function displayEndMsg(){
-    ctx.fill = "white";
-}
 function gameOver(){
     enemy.x = -100;
     enemy.speed = 0;
     player.x = 200;
     player.y = 370;
-    displayEndMsg();
 }
-
+function newGame() {
+    modal.classList.add('display-none');
+    modal.innertHTML = `<i class="fas fa-redo-alt restart"></i>`;
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -149,13 +157,18 @@ var xPoint = [-100, -80, -20, -10];
 var yPoint = [60, 140, 220];
 var lives = 3;
 var score = 0;
+var modal = document.querySelector('.game-over-modal');
+var restart = document.querySelector('.restart');
 var enemy = new Enemy(
     xPoint[Math.floor(Math.random(), xPoint.length)], 
     yPoint[Math.floor(Math.random() * yPoint.length)], 
     Math.floor(Math.random() * 500));
 allEnemies.push(enemy);
 
+restart.addEventListener('click', function(){
+    newGame();
 
+})
 
 
 // This listens for key presses and sends the keys to your
