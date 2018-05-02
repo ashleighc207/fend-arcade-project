@@ -17,6 +17,11 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// Checks to see if an enemy and player collided
+Enemy.prototype.collide = function(){
+
+}
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -28,7 +33,7 @@ var Player = function(x, y, speed) {
     this.sprite = 'images/char-cat-girl.png';
 };
 
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
 
 };
 
@@ -75,6 +80,17 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+// Checks to see if a user made it to the top without colliding
+// and adds one to the score if so
+Player.prototype.score = function(){
+
+}
+
+// Determines a way to win, and alerts when won via modal 
+Player.prototype.win = function(){
+
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -83,12 +99,20 @@ var allEnemies = [];
 var player = new Player(200,370,50);
 var xPoint = [-100, -80, -20, -10];
 var yPoint = [60, 140, 220];
-var randX = xPoint[Math.floor(Math.random(), xPoint.length)];
-var randY = yPoint[Math.floor(Math.random() * yPoint.length)];
-var randSpeed = Math.floor(Math.random() * (200 + 100));
 
-var enemy = new Enemy(randX, randY, randSpeed);
-allEnemies.push(enemy);
+
+
+// make bugs keep coming 
+setInterval(function(){
+    var enemy = new Enemy(
+    xPoint[Math.floor(Math.random(), xPoint.length)], 
+    yPoint[Math.floor(Math.random() * yPoint.length)], 
+    Math.floor(Math.random() * (200 + 100))
+    );
+
+    allEnemies.push(enemy);
+}, 1500);
+
 
 
 // This listens for key presses and sends the keys to your
