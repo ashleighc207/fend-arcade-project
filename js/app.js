@@ -10,6 +10,11 @@ var Enemy = function(x, y, speed) {
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
     this.x += (this.speed * dt);
+
+    // reset the enemies location
+    if(this.x >= 505){
+        this.x = 0;
+    }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -100,18 +105,14 @@ var player = new Player(200,370,50);
 var xPoint = [-100, -80, -20, -10];
 var yPoint = [60, 140, 220];
 
-
-
-// make bugs keep coming 
-setInterval(function(){
-    var enemy = new Enemy(
+var enemy = new Enemy(
     xPoint[Math.floor(Math.random(), xPoint.length)], 
     yPoint[Math.floor(Math.random() * yPoint.length)], 
-    Math.floor(Math.random() * (200 + 100))
-    );
+    Math.floor(Math.random() * (300 + 100))
+);
 
-    allEnemies.push(enemy);
-}, 1500);
+allEnemies.push(enemy);
+
 
 
 
