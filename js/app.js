@@ -14,6 +14,8 @@ Enemy.prototype.update = function(dt) {
     this.reset();
 };
 
+// reset the enemies once they hit the "wall" by assigning
+// random values for x coord, y coord, and speed
 Enemy.prototype.reset = function() {
     this.wall = 400;
     this.resetX = xPoint[Math.floor(Math.random(), xPoint.length)];
@@ -45,10 +47,6 @@ Enemy.prototype.hasCollided = function() {
         player.x = 200;
         player.y = 370;
         lives--;
-        if(lives == 0) {
-            lostGame = true;
-        }
-        enemy.render();
     }
 };
 
@@ -63,7 +61,8 @@ var Player = function(x, y, speed) {
     this.speed = speed;
     this.sprite = 'images/char-cat-girl.png';
 };
-// checks if a user has earned points or died
+
+// checks if a user has earned points or if they have died
 Player.prototype.update = function() {
     this.earnPoint();
     if(lives == 0){
@@ -79,6 +78,7 @@ Player.prototype.earnPoint = function(){
         player.y = 370;
     }    
 }
+
 
 // Draw the player on the screen, required method for game
 Player.prototype.render = function() {
@@ -122,22 +122,12 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+// reset function that applies to both winning and losing to 
+// start with a fresh game board
 function resetGame(){
-    console.log('game reset!');
     player.x = 200;
     player.y = 370;
-    lives = 3;
-    score = 0;
-    if(score == 360){
-        modal.innerHTML = `
-        <h1 class="heading-one">Congrats! You won!</h1>
-        <p class="text">Your score is ${score} and you finished with ${lives} lives!</p>
-        <p class="new-game">Would you like to play again?</p>
-        <i class="fas fa-redo-alt restart" onclick="newGame()"></i>
-        `;
-        modal.classList.remove('display-none');
-        allEnemies = [];
-    } else if(lostGame){
+    if(lostGame){
         modal.innerHTML = `
         <h1 class="heading-one">Oh no!</h1>
         <h1 class="heading-one">The bugs got you!</h1>
@@ -152,17 +142,25 @@ function resetGame(){
     }
 }
 
-function gameOver(){
-    enemy.x = -100;
-    enemy.speed = 0;
-    player.x = 200;
-    player.y = 370;
-    lostGame = true;
+// if user reaches max score, present the modal alerting them they
+// won and offer them a way to start a new game
+function wonGame(){
+    modal.innerHTML = `
+    <h1 class="heading-one">Congrats! You won!</h1>
+    <p class="text">Your score is ${score} and you finished with ${lives} lives!</p>
+    <p class="new-game">Would you like to play again?</p>
+    <i class="fas fa-redo-alt restart" onclick="newGame()"></i>
+    `;
+    modal.classList.remove('display-none');
+    allEnemies = [];
 }
 
+// start a new game
 function newGame() {
     modal.classList.add('display-none');
     modal.innerHTML = `<i class="fas fa-redo-alt restart"></i>`;
+    lives = 3;
+    score = 0;
     allEnemies.push(enemy);
 }
 
@@ -184,11 +182,14 @@ var enemy = new Enemy(
     yPoint[Math.floor(Math.random() * yPoint.length)], 
     Math.floor(Math.random() * 500));
 
-
-
-allEnemies.push(enemy);
-
-
+setInterval(function(){
+    if (score == 500){
+        wonGame();
+    }
+    if (lives == 0) {
+        lostGame = true;
+    }
+}, 200);
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
@@ -201,3 +202,13 @@ document.addEventListener('keyup', function(e) {
     };
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+// call new game function
+newGame();
+
+
+
+
+
+
+
