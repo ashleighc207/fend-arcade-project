@@ -1,3 +1,4 @@
+
 // Enemies our player must avoid
 var Enemy = function(x, y, speed) {
     this.x = x;
@@ -18,13 +19,10 @@ Enemy.prototype.update = function(dt) {
 // random values for x coord, y coord, and speed
 Enemy.prototype.reset = function() {
     this.wall = 400;
-    this.resetX = xPoint[Math.floor(Math.random(), xPoint.length)];
-    this.resetY = yPoint[Math.floor(Math.random() * yPoint.length)];
-    this.resetS = Math.floor(Math.random() * 500);
     if(this. x > this.wall){
-        this.x = this.resetX;
-        this.y = this.resetY;
-        this.speed = this.resetS;
+        this.x = xPoint[Math.floor(Math.random(), xPoint.length)];
+        this.y = yPoint[Math.floor(Math.random() * yPoint.length)];
+        this.speed = Math.random() *  300 + 100;
     }
 }
 
@@ -47,7 +45,7 @@ Enemy.prototype.render = function() {
 
 Enemy.prototype.hasCollided = function() {
     var p = {x: player.x, y: player.y, height: 50, width: 50};
-    var e = {x: enemy.x, y: enemy.y, height: 50, width: 50};
+    var e = {x: this.x, y: this.y, height: 50, width: 50};
     if (p.x < e.x + e.width && 
         p.y < e.y + e.height && 
         p.x + p.width > e.x &&
@@ -78,9 +76,9 @@ Player.prototype.update = function() {
 // Checks to see if a user made it to the top without colliding
 // and adds one to the score if so
 Player.prototype.earnPoint = function(){
-    if(player.y == -30){
+    if(this.y == -30){
         score += 20;
-        player.y = 370;
+        this.y = 370;
     }    
 }
 
@@ -90,6 +88,7 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+
 // Allow the user to move the player via key press
 Player.prototype.handleInput = function(key) {
     var minX = 0;
@@ -98,31 +97,31 @@ Player.prototype.handleInput = function(key) {
     var maxY = 370;
 
     if (key == 'left'){
-        if(player.x > minX) {
-            player.x -= 100;
+        if(this.x > minX) {
+            this.x -= 100;
         } else {
-            player.x += 0;
+            this.x += 0;
         }
     } 
     if (key == 'up'){
-        if(player.y > minY){
-            player.y -= 80;
+        if(this.y > minY){
+            this.y -= 80;
         } else {
-            player.y += 0;
+            this.y += 0;
         }
     }
     if (key == 'right'){
-        if(player.x < maxX) {
-            player.x += 100;
+        if(this.x < maxX) {
+            this.x += 100;
         } else {
-            player.x += 0;
+            this.x += 0;
         }
     }
     if (key == 'down'){
-        if(player.y < maxY){
-            player.y += 80;
+        if(this.y < maxY){
+            this.y += 80;
         } else {
-            player.y += 0;
+            this.y += 0;
         }
     }
 };
@@ -134,6 +133,14 @@ function resetGame(){
     player.y = 370;
     allEnemies = []; 
     gameStatus();
+}
+
+
+function popupModal(){
+    left = left - (modal.width() / 2);
+    left = left - (canvas.width / 2);
+    modal.css('left', left + 'px');
+    modal.css('top', top + px);
 }
 
 // if user reaches max score, present the modal alerting them they
@@ -168,7 +175,8 @@ function newGame() {
     lives = 3;
     score = 0;
     gameStatus();
-    allEnemies.push(enemy);
+    resetGame();
+    allEnemies.push(fred, jill);
 }
 
 function gameStatus() {
@@ -196,10 +204,14 @@ var lives = 3;
 var score = 0;
 var modal = document.querySelector('.game-over-modal');
 var restart = document.querySelector('.restart');
-var enemy = new Enemy(
+var fred = new Enemy(
     xPoint[Math.floor(Math.random(), xPoint.length)], 
     yPoint[Math.floor(Math.random() * yPoint.length)], 
-    Math.floor(Math.random() * 500));
+    Math.random() * 300 + 100);
+var jill = new Enemy(
+    xPoint[Math.floor(Math.random(), xPoint.length)], 
+    yPoint[Math.floor(Math.random() * yPoint.length)], 
+    Math.random() * 300 + 100);
 
 
 // This listens for key presses and sends the keys to your
