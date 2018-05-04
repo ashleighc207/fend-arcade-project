@@ -12,7 +12,6 @@ var Enemy = function(x, y, speed) {
 Enemy.prototype.update = function(dt) {
     this.x += (this.speed * dt);
     this.hasCollided();
-    this.reset();
 };
 
 // reset the enemies once they hit the "wall" by assigning
@@ -50,8 +49,7 @@ Enemy.prototype.hasCollided = function() {
         p.y < e.y + e.height && 
         p.x + p.width > e.x &&
         p.y + p.height > e.y){
-        player.x = 200;
-        player.y = 370;
+        player.reset();
         lives--;
     }
 };
@@ -68,9 +66,8 @@ var Player = function(x, y, speed) {
     this.sprite = 'images/char-cat-girl.png';
 };
 
-// checks if a user has earned points or if they have died
 Player.prototype.update = function() {
-    this.earnPoint();
+
 };
 
 // Checks to see if a user made it to the top without colliding
@@ -86,6 +83,12 @@ Player.prototype.earnPoint = function(){
 // Draw the player on the screen, required method for game
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Draw the player on the screen, required method for game
+Player.prototype.reset = function() {
+    this.x = 200;
+    this.y = 370;
 };
 
 
@@ -124,24 +127,25 @@ Player.prototype.handleInput = function(key) {
             this.y += 0;
         }
     }
+    this.earnPoint();
 };
 
 // reset function that applies to both winning and losing to 
 // start with a fresh game board
 function resetGame(){
-    player.x = 200;
-    player.y = 370;
+    player.reset();
     allEnemies = []; 
-    gameStatus();
+    fred.delete();
+    jill.delete();
 }
 
 
-function popupModal(){
-    left = left - (modal.width() / 2);
-    left = left - (canvas.width / 2);
-    modal.css('left', left + 'px');
-    modal.css('top', top + px);
-}
+// function popupModal(){
+//     left = left - (modal.width() / 2);
+//     left = left - (canvas.width / 2);
+//     modal.css('left', left + 'px');
+//     modal.css('top', top + px);
+// }
 
 // if user reaches max score, present the modal alerting them they
 // won and offer them a way to start a new game
@@ -158,7 +162,6 @@ function wonGame(){
 
 function lostGame(){
     allEnemies = [];
-    enemy.delete();
     modal.innerHTML = `
     <h1 class="heading-one">Oh no!</h1>
     <h1 class="heading-one">The bugs got you!</h1>
@@ -170,24 +173,28 @@ function lostGame(){
 }
 // start a new game
 function newGame() {
+    resetGame();
     modal.classList.add('display-none');
     modal.innerHTML = `<i class="fas fa-redo-alt restart"></i>`;
     lives = 3;
     score = 0;
     gameStatus();
-    resetGame();
     allEnemies.push(fred, jill);
 }
 
 function gameStatus() {
     var statusCheck = setInterval(function(){
+        fred.reset();
+        jill.reset();
     if (score == 500){
-        wonGame();
         clearInterval(statusCheck);
+        wonGame();
+        resetGame();
     }
     if (lives == 0) {
-        lostGame();
         clearInterval(statusCheck);
+        lostGame();
+        resetGame();
     }
 }, 200);
 }
@@ -204,6 +211,7 @@ var lives = 3;
 var score = 0;
 var modal = document.querySelector('.game-over-modal');
 var restart = document.querySelector('.restart');
+var canvas = document.getElementsByTagName('canvas');
 var fred = new Enemy(
     xPoint[Math.floor(Math.random(), xPoint.length)], 
     yPoint[Math.floor(Math.random() * yPoint.length)], 
